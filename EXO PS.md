@@ -273,6 +273,83 @@ foreach ($user in $users) {
 
 ---
 
-These examples use the `foreach` loop for simpler and more readable code, avoiding the need for index variables like `$i`.
+### Using CSV files for loops
+
+#### 1. Prepare Your CSV File
+
+Create a CSV file named `DistributionGroups.csv` with the necessary columns for the distribution lists. Here’s an example structure:
+
+```plaintext
+Name,PrimarySmtpAddress,Alias
+Group1,group1@example.com,group1
+Group2,group2@example.com,group2
+Group3,group3@example.com,group3
+```
+
+This CSV file should be saved in a location accessible to your PowerShell script.
+
+#### 2. Import the CSV File
+
+To read the CSV file into a PowerShell variable, you use the `Import-Csv` cmdlet. 
+
+**Command:**
+```powershell
+$DistributionGroups = Import-Csv -Path "C:\Path\To\Your\DistributionGroups.csv"
+```
+
+**Explanation:**
+- **Import-Csv**: This cmdlet reads the content of the specified CSV file and converts each row into a custom PowerShell object.
+- **-Path**: Specifies the path to your CSV file. Make sure to provide the correct path to your file.
+- **$DistributionGroups**: This variable now holds an array of objects where each object corresponds to a row in the CSV file, with properties matching the column headers.
+
+#### 3. Loop Through the Imported Data
+
+Use a `foreach` loop to iterate over each object (distribution group) in the `$DistributionGroups` array.
+
+**Command:**
+```powershell
+foreach ($DistributionGroup in $DistributionGroups) {
+```
+
+**Explanation:**
+- **foreach**: This keyword initiates a loop that goes through each item in the specified collection (in this case, `$DistributionGroups`).
+- **$DistributionGroup**: This variable represents the current item in the loop. For each iteration, it holds one distribution group object.
+
+#### 4. Create Distribution Lists
+
+Inside the loop, you can call the `New-DistributionGroup` cmdlet to create a new distribution list for each object.
+
+**Command:**
+```powershell
+New-DistributionGroup -Name $DistributionGroup.Name `
+                      -PrimarySmtpAddress $DistributionGroup.PrimarySmtpAddress `
+                      -Alias $DistributionGroup.Alias
+```
+
+**Explanation:**
+- **New-DistributionGroup**: This cmdlet creates a new distribution group (DL) in Exchange.
+- **-Name**: Specifies the name of the distribution group. It pulls the value from the `Name` property of the current `$DistributionGroup` object.
+- **-PrimarySmtpAddress**: Sets the primary SMTP address for the distribution group, using the value from the `PrimarySmtpAddress` property.
+- **-Alias**: Sets the alias for the distribution group, using the value from the `Alias` property.
+- The backtick (`) at the end of each line allows the command to continue onto the next line, improving readability.
+
+#### 5. Complete Script Example
+
+Putting it all together, here’s the complete script:
+
+```powershell
+# Step 1: Import the CSV file
+$DistributionGroups = Import-Csv -Path "C:\Path\To\Your\DistributionGroups.csv"
+
+# Step 2: Loop through each distribution group
+foreach ($DistributionGroup in $DistributionGroups) {
+    # Step 3: Create the distribution group
+    New-DistributionGroup -Name $DistributionGroup.Name `
+                          -PrimarySmtpAddress $DistributionGroup.PrimarySmtpAddress `
+                          -Alias $DistributionGroup.Alias
+}
+```
+
+This approach efficiently handles the bulk creation of distribution lists from a CSV file, making it easy to manage and automate this process in an Exchange environment.
 
 These tasks cover a wide range of administrative responsibilities in **Exchange Online**, from managing mailboxes and distribution groups to configuring mail flow rules and auditing mailbox activity.
