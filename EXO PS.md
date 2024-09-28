@@ -196,4 +196,83 @@ Removes litigation hold from a mailbox.
 
 ---
 
+
+### 1. **Simple Loop (Numbers)**
+This loop prints numbers from 1 to 10.
+
+```powershell
+foreach ($number in 1..10) {
+    Write-Host $number
+}
+```
+
+#### Explanation:
+- **`foreach ($number in 1..10)`**: Directly iterates over the numbers from 1 to 10.
+- **`Write-Host $number`**: Prints each number.
+
+### 2. **Loop Over a List of Users**
+This loop iterates over a list of email addresses.
+
+```powershell
+# List of users
+$users = @("user1@domain.com", "user2@domain.com", "user3@domain.com")
+
+# Loop through each user and print their email
+foreach ($user in $users) {
+    Write-Host "Processing: $user"
+}
+```
+
+#### Explanation:
+- **`foreach ($user in $users)`**: Iterates directly over each user in the list.
+- **`$user`**: Refers to the current user in the loop.
+- **`Write-Host "Processing: $user"`**: Prints the user email being processed.
+
+### 3. **Loop to Modify Users' Settings (Enabling OWA)**
+This loop enables **Outlook on the Web (OWA)** access for multiple users.
+
+```powershell
+# List of users
+$users = @("user1@domain.com", "user2@domain.com", "user3@domain.com")
+
+# Loop through each user and enable OWA
+foreach ($user in $users) {
+    Write-Host "Enabling OWA for $user"
+    Set-CASMailbox -Identity $user -OWAEnabled $true
+}
+```
+
+#### Explanation:
+- **`foreach ($user in $users)`**: Directly iterates over the list of users.
+- **`Set-CASMailbox`**: Enables OWA for each user in the list.
+- **`Write-Host "Enabling OWA for $user"`**: Informs which user is being processed in each iteration.
+
+### 4. **Loop with Conditional Logic (Mailbox Size Check)**
+This loop checks if a user's mailbox is over a certain size (50 GB) and prints a warning if so.
+
+```powershell
+# List of users
+$users = @("user1@domain.com", "user2@domain.com", "user3@domain.com")
+
+# Loop through each user and check mailbox size
+foreach ($user in $users) {
+    $mailboxStats = Get-MailboxStatistics -Identity $user
+    $currentSizeInGB = [math]::Round(($mailboxStats.TotalItemSize.Value.ToBytes() / 1GB), 2)
+    
+    if ($currentSizeInGB -gt 50) {
+        Write-Host "$user's mailbox size is $currentSizeInGB GB - WARNING: Over quota!"
+    } else {
+        Write-Host "$user's mailbox size is $currentSizeInGB GB - OK"
+    }
+}
+```
+
+#### Explanation:
+- **`foreach ($user in $users)`**: Directly iterates over the list of users.
+- **Conditional Check**: If the mailbox size is greater than 50GB, it prints a warning.
+
+---
+
+These examples use the `foreach` loop for simpler and more readable code, avoiding the need for index variables like `$i`.
+
 These tasks cover a wide range of administrative responsibilities in **Exchange Online**, from managing mailboxes and distribution groups to configuring mail flow rules and auditing mailbox activity.
